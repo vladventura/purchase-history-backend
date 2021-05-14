@@ -1,4 +1,7 @@
-const { UserInputError } = require("apollo-server-express");
+const {
+  UserInputError,
+  AuthenticationError,
+} = require("apollo-server-express");
 
 const ItemModel = require("../../models/Item");
 const UserModel = require("../../models/User");
@@ -50,7 +53,25 @@ const addItem = async (_, { name, price, cost }, context) => {
   return item;
 };
 
+const deleteItem = async (_, { itemId }, context) => {
+  // TODO: Check if the user is authenticated
+  const user = checkAuth(context);
+  // TODO: Check if this item is owned by the user, and if it exists
+  try {
+    const foundItem = await ItemModel.findById(itemId);
+    console.log(itemId, foundItem.username, user);
+    if (foundItem.username === user.username) {
+      await foundItem.delete();
+      return "Item deleted";
+    } else {
+      throw new AuthenticationError("This item does not belong to this user");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 module.exports.itemResolver = {
   Query: { getItems },
-  Mutation: { addItem },
+  Mutation: { addItem, deleteItem },
 };

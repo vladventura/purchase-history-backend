@@ -10,5 +10,6 @@ module.exports.Mutation = gql`
     ): User!
     login(username: String!, password: String!): User!
     addItem(name: String!, price: Float!, cost: Float!): Item!
+    deleteItem(itemId: ID!): String!
   }
 `;
