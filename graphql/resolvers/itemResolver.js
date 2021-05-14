@@ -5,6 +5,7 @@ const {
 
 const ItemModel = require("../../models/Item");
 const UserModel = require("../../models/User");
+const UserProfileModel = require("../../models/UserProfile");
 const checkAuth = require("../../utils/checkAuth");
 const { validateItemInput } = require("../../utils/validators");
 
@@ -25,7 +26,6 @@ const getItems = async (_, __, context) => {
 };
 
 const addItem = async (_, { name, price, cost }, context) => {
-  console.log(price);
   const { errors, valid } = validateItemInput(name, price, cost);
   if (!valid) {
     throw new UserInputError("There's something going on", {
@@ -50,6 +50,15 @@ const addItem = async (_, { name, price, cost }, context) => {
     createdAt: new Date().toISOString(),
   });
   const item = await newItem.save();
+
+  // Get the user's profile and add the price, cost and item count to it
+  const profile = await UserProfileModel.findOne({ user: user.id });
+  await profile.updateOne({
+    totalCost: profile.totalCost + item.cost,
+    totalPrice: profile.totalPrice + item.price,
+    totalAddedItems: profile.totalAddedItems + 1,
+  });
+
   return item;
 };
 
@@ -58,9 +67,15 @@ const deleteItem = async (_, { itemId }, context) => {
   const user = checkAuth(context);
   // TODO: Check if this item is owned by the user, and if it exists
   try {
-    const foundItem = await ItemModel.findById(itemId);
-    if (foundItem.username === user.username) {
-      await foundItem.delete();
+    const item = await ItemModel.findById(itemId);
+    if (item.username === user.username) {
+      await item.delete();
+      const profile = await UserProfileModel.findOne({ user: user.id });
+      await profile.updateOne({
+        totalCost: profile.totalCost - item.cost,
+        totalPrice: profile.totalPrice - item.price,
+        totalAddedItems: profile.totalAddedItems - 1,
+      });
       return "Item deleted";
     } else {
       throw new AuthenticationError("This item does not belong to this user");
@@ -75,9 +90,15 @@ const updateItem = async (_, { itemId, name, price, cost }, context) => {
   const { errors, valid } = validateItemInput(name, price, cost);
   if (valid) {
     try {
-      const foundItem = await ItemModel.findById(itemId);
-      if (foundItem.username === user.username) {
-        await foundItem.updateOne({
+      const item = await ItemModel.findById(itemId);
+      if (item.username === user.username) {
+        // Before the update, adjust prices
+        const profile = await UserProfileModel.findOne({ user: user.id });
+        await profile.updateOne({
+          totalCost: profile.totalCost + (cost - item.cost),
+          totalPrice: profile.totalPrice + (price - item.price),
+        });
+        await item.updateOne({
           name,
           price,
           cost,
