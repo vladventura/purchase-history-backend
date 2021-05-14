@@ -11,5 +11,6 @@ module.exports.Mutation = gql`
     login(username: String!, password: String!): User!
     addItem(name: String!, price: Float!, cost: Float!): Item!
     deleteItem(itemId: ID!): String!
+    updateItem(itemId: ID!, name: String!, price: Float!, cost: Float!): String!
   }
 `;

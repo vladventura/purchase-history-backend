@@ -59,7 +59,6 @@ const deleteItem = async (_, { itemId }, context) => {
   // TODO: Check if this item is owned by the user, and if it exists
   try {
     const foundItem = await ItemModel.findById(itemId);
-    console.log(itemId, foundItem.username, user);
     if (foundItem.username === user.username) {
       await foundItem.delete();
       return "Item deleted";
@@ -71,7 +70,32 @@ const deleteItem = async (_, { itemId }, context) => {
   }
 };
 
+const updateItem = async (_, { itemId, name, price, cost }, context) => {
+  const user = checkAuth(context);
+  const { errors, valid } = validateItemInput(name, price, cost);
+  if (valid) {
+    try {
+      const foundItem = await ItemModel.findById(itemId);
+      if (foundItem.username === user.username) {
+        await foundItem.updateOne({
+          name,
+          price,
+          cost,
+        });
+        return "Item updated";
+      } else {
+        throw new AuthenticationError("This item does not belong to you");
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+  throw new UserInputError("Missing/wrong values", {
+    errors,
+  });
+};
+
 module.exports.itemResolver = {
   Query: { getItems },
-  Mutation: { addItem, deleteItem },
+  Mutation: { addItem, deleteItem, updateItem },
 };
