@@ -6,6 +6,7 @@ const {
   validateLoginInput,
 } = require("../../utils/validators");
 const UserModel = require("../../models/User");
+const UserProfileModel = require("../../models/UserProfile");
 
 const generateToken = (user) =>
   jwt.sign(
@@ -47,20 +48,32 @@ const register = async (_, { username, email, password, confirmPassword }) => {
       errors: { ...errs },
     });
   }
-  /// TODO: Return a user object
   password = await bcrypt.hash(password, 12);
+  const createdAt = new Date().toISOString();
   const newUser = new UserModel({
     email,
     username,
     password,
-    createdAt: new Date().toISOString(),
+    createdAt,
   });
-  const result = await newUser.save();
-  const token = generateToken(result);
+  const user = await newUser.save();
+
+  // Create the user's profile
+  const profile = new UserProfileModel({
+    createdAt,
+    totalCost: 0,
+    totalPrice: 0,
+    totalAddedItems: 0,
+    user: user.id,
+  });
+  await profile.save();
+  // Returning a user with a token
+  const token = generateToken(user);
   return {
-    ...result._doc,
-    id: result._id,
+    ...user._doc,
+    id: user._id,
     token,
+    profile,
   };
 };
 
@@ -73,8 +86,8 @@ const login = async (_, { username, password }) => {
     });
   }
   // Check if user exists
-  const foundUser = await UserModel.findOne({ username });
-  if (!foundUser) {
+  const user = await UserModel.findOne({ username });
+  if (!user) {
     throw new UserInputError("User not found", {
       errors: {
         general: "Couldn't find user with these credentials",
@@ -82,7 +95,7 @@ const login = async (_, { username, password }) => {
     });
   }
   //  Matching credentials
-  const match = await bcrypt.compare(password, foundUser.password);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) {
     throw new UserInputError("Wrong credentials", {
       errors: {
@@ -90,13 +103,17 @@ const login = async (_, { username, password }) => {
       },
     });
   }
-  const token = generateToken(foundUser);
+  const token = generateToken(user);
+  // Get the profile here
+  const profile = await UserProfileModel.findOne({ user: user.id });
   // Returning user
-  return {
-    ...foundUser._doc,
-    id: foundUser._id,
+  const result = {
+    ...user._doc,
+    id: user._id,
     token,
+    profile,
   };
+  return result;
 };
 
 module.exports.userResolver = {
