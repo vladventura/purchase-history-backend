@@ -46,7 +46,7 @@ module.exports.validateLoginInput = (username, password) => {
 
 module.exports.validateItemInput = (name, price, cost) => {
   const errors = {};
-  if (!name || name === "") {
+  if (!name || name.trim() === "") {
     errors.name = "Name cannot be empty";
   }
   if (typeof price !== "number" || isNaN(price)) {
