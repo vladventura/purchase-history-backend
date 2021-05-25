@@ -95,8 +95,8 @@ const updateItem = async (_, { itemId, name, price, cost }, context) => {
         // Before the update, adjust prices
         const profile = await UserProfileModel.findOne({ user: user.id });
         await profile.updateOne({
-          totalCost: profile.totalCost + (cost - item.cost),
-          totalPrice: profile.totalPrice + (price - item.price),
+          totalCost: profile.totalCost + Math.abs(cost - item.cost),
+          totalPrice: profile.totalPrice + Math.abs(price - item.price),
         });
         await item.updateOne({
           name,
