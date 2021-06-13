@@ -1,5 +1,5 @@
 runtime: nodejs10
-env: flex
+env: standard
 service: backend
 resources:
   cpu: 1

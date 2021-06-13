@@ -21,8 +21,7 @@
     "nodemon": "^2.0.7"
   },
   "engines": {
-    "node": "10.x.x",
-    "npm": "6.14.5"
+    "node": "10.x.x"
   },
   "nodemonConfig": {
     "restartable": "rs",
