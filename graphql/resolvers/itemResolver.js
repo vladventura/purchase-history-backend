@@ -63,6 +63,7 @@ const addItem = async (_, { name, price, cost }, context) => {
 };
 
 const deleteItem = async (_, { itemId }, context) => {
+  console.log(itemId);
   // TODO: Check if the user is authenticated
   const user = checkAuth(context);
   // TODO: Check if this item is owned by the user, and if it exists
@@ -76,7 +77,7 @@ const deleteItem = async (_, { itemId }, context) => {
         totalPrice: profile.totalPrice - item.price,
         totalAddedItems: profile.totalAddedItems - 1,
       });
-      return "Item deleted";
+      return itemId;
     } else {
       throw new AuthenticationError("This item does not belong to this user");
     }
