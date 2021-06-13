@@ -1,12 +1,13 @@
 runtime: nodejs10
-env: standard
+env: flex
 service: backend
-manual_scaling:
-  instances: 1
 resources:
   cpu: 1
   memory_gb: 0.5
   disk_size_gb: 10
-network:
-  forwarded_ports:
-    - 5000:8080
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 20
+  cool_down_period_sec: 60
+  cpu_utilization:
+    target_utilization: 0.80
