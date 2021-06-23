@@ -10,6 +10,7 @@ const UserProfileModel = require("../../models/UserProfile");
 const { sendConfirmAccountMail } = require("../../utils/mailhandler");
 const CryptoJS = require("crypto-js");
 const { ApolloError } = require("apollo-server-express");
+const { loggerFactory } = require("../../utils/logger");
 
 const generateToken = (user) =>
   jwt.sign(
