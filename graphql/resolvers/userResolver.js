@@ -9,9 +9,8 @@ const UserModel = require("../../models/User");
 const UserProfileModel = require("../../models/UserProfile");
 const { sendConfirmAccountMail } = require("../../utils/mailhandler");
 const CryptoJS = require("crypto-js");
-const { ApolloError } = require("apollo-server-express");
 const { loggerFactory } = require("../../utils/logger");
-
+const { UserNotVerified } = require("../exceptions");
 const logger = loggerFactory("info", "userResolver");
 
 const generateToken = (user) =>
@@ -231,14 +230,6 @@ const resendConfirmationEmail = async (_, { userId }) => {
   // Return whatever string
   return "Sent!";
 };
-
-class UserNotVerified extends ApolloError {
-  constructor(message, properties) {
-    super(message, "USER_NOT_VERIFIED", properties);
-
-    Object.defineProperty(this, "name", { value: "UserNotVerified" });
-  }
-}
 
 module.exports.userResolver = {
   Mutation: {
