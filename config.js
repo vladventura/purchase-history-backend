@@ -1,9 +1,17 @@
+const { loggerFactory } = require("./utils/logger");
+
+const logger = loggerFactory("info", "config");
+
+logger.log("info", "Building config object");
+
 const env = process.env.NODE_ENV;
 const config = {};
 
 if (env === "development") {
+  logger.log("info", "Dev Environment");
   config.uri = process.env.MONGODB_DEV_URI;
 } else {
+  logger.log("info", "Prod Environment");
   const user = process.env.MONGODB_ATLAS_USER;
   const password = process.env.MONGODB_ATLAS_PASSWORD;
   const cluster = process.env.MONGODB_ATLAS_CLUSTER;
