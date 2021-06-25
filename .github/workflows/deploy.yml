@@ -15,6 +15,11 @@ jobs:
           NOREPLY_PASSWORD: ${{ secrets.NOREPLY_PASSWORD }}
           NOREPLY_HOST: ${{ secrets.NOREPLY_HOST }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          MONGODB_ATLAS_USER: ${{ secrets.MONGODB_ATLAS_USER }}
+          MONGODB_ATLAS_PASSWORD: ${{ secrets.MONGODB_ATLAS_PASSWORD }}
+          MONGODB_ATLAS_CLUSTER: ${{ secrets.MONGODB_ATLAS_CLUSTER }}
+          MONGODB_ATLAS_DBNAME: ${{ secrets.MONGODB_ATLAS_DBNAME }}
+          MONGODB_ATLAS_OPTIONS: ${{ secrets.MONGODB_ATLAS_OPTIONS }}
       - uses: google-github-actions/deploy-appengine@main
         with:
           credentials: ${{ secrets.GCLOUD_AUTH }}
