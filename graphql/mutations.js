@@ -7,8 +7,10 @@ module.exports.Mutation = gql`
       email: String!
       password: String!
       confirmPassword: String!
-    ): User!
+    ): String!
     login(username: String!, password: String!): User!
+    confirmAccount(userId: String!): User!
+    resendConfirmationEmail(userId: String!): String!
     addItem(name: String!, price: Float!, cost: Float!): Item!
     deleteItem(itemId: ID!): String!
     updateItem(itemId: ID!, name: String!, price: Float!, cost: Float!): String!

@@ -11,3 +11,8 @@ automatic_scaling:
   cool_down_period_sec: 60
   cpu_utilization:
     target_utilization: 0.80
+env_variables:
+  NOREPLY_USERNAME: $NOREPLY_USERNAME
+  NOREPLY_PASSWORD: $NOREPLY_PASSWORD
+  NOREPLY_HOST: $NOREPLY_HOST
+  JWT_SECRET: $JWT_SECRET

@@ -5,6 +5,7 @@ const UserModel = new Schema({
   password: String,
   email: String,
   createdAt: String,
+  validated: Boolean,
 });
 
 module.exports = model("User", UserModel);

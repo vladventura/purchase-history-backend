@@ -15,5 +15,6 @@ module.exports.User = gql`
     createdAt: String!
     items: [Item]!
     profile: UserProfile!
+    validated: Boolean
   }
 `;
