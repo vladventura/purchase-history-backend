@@ -1,16 +1,16 @@
-runtime: nodejs10
-env: standard
+runtime: nodejs
+env: flex
 service: backend
-# resources:
-#   cpu: 1
-#   memory_gb: 0.5
-#   disk_size_gb: 10
-# automatic_scaling:
-#   min_num_instances: 1
-#   max_num_instances: 20
-#   cool_down_period_sec: 60
-#   cpu_utilization:
-#     target_utilization: 0.80
+resources:
+  cpu: 1
+  memory_gb: 0.5
+  disk_size_gb: 10
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 20
+  cool_down_period_sec: 60
+  cpu_utilization:
+    target_utilization: 0.80
 env_variables:
   NOREPLY_USERNAME: $NOREPLY_USERNAME
   NOREPLY_PASSWORD: $NOREPLY_PASSWORD
